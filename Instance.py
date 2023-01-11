@@ -17,21 +17,21 @@ class Instance:
         return self.name + " @ " + self.path + " : " + self._loader + " " + self._game_version
 
     def is_compatible_with(self, version):
-        return self._loader in version.loaders and self._game_version in version.gameVersions
+        return self._loader in version["loaders"] and self._game_version in version["game_versions"]
 
-    def infer_mod(self, mod):
+    def _get_mod(self, mod):
         if mod.endswith(".disabled"):
             return None
         try:
-            return Mod.Mod(self.path + '/' + mod)
+            return Mod.Mod(self.path + '/mods/' + mod)
         except Mod.ModNotFoundError as error:
             print(error)
             return mod, error.mapped
 
-    def infer_all_existing_mods(self):
+    def get_all_mods(self):
         # Asynchronously infer all existing mods
         pool = multiprocessing.Pool(multiprocessing.cpu_count())
-        self._mods = pool.map_async(self.infer_mod, os.listdir(self.path + "/mods")).get()
+        self._mods = pool.map_async(self._get_mod, os.listdir(self.path + "/mods/")).get()
         pool.close()
         pool.join()
 
@@ -43,7 +43,6 @@ class Instance:
         print("Found mods:", ', '.join((str(i) for i in self._mods)))
         print("Missed mods (Ignored):", ', '.join(i[0] + " -> " + i[1] + "?" if len(i) == 2 else i[0] for i in missed_mods))
 
-    def update_all_inferred_mods(self):
-
+    def update_all_mods(self):
         for mod in self._mods:
             mod.update(self)
