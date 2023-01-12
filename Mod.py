@@ -2,20 +2,25 @@ import hashlib
 import os
 import re
 import time
+
 import requests
 
 
-class ModNotFoundError(Exception):
-    def __init__(self, what, mapped):
+class ModNotFoundException(Exception):
+    def __init__(self, what):
         super().__init__(what)
-        self.mapped = mapped
+
+
+class ModrinthRequestException(Exception):
+    def __init__(self, what):
+        super().__init__(what)
 
 
 def make_modrinth_request(request, wait_on_ratelimit_error=True):
     try:
         result = requests.get("https://api.modrinth.com/v2/" + request).json()
     except requests.JSONDecodeError:
-        raise Exception("Invalid Modrinth request: " + str(request))
+        raise ModrinthRequestException("Invalid Modrinth request: https://api.modrinth.com/v2/" + str(request))
     if "error" in result.keys():
         if result["error"] == "ratelimit_error":
             print(result["description"])
@@ -29,7 +34,10 @@ class Mod:
         with open(jar, 'rb') as f:
             hasher = hashlib.sha512(f.read())
         self.hash = hasher.hexdigest()
-        self._version = make_modrinth_request("version_file/" + self.hash + "?algorithm=sha512")
+        try:
+            self._version = make_modrinth_request("version_file/" + self.hash + "?algorithm=sha512")
+        except ModrinthRequestException:
+            raise ModNotFoundException(jar + " cannot be found on Modrinth.")
         self._project = make_modrinth_request("project/" + self._version["project_id"])
 
     def __repr__(self):
@@ -38,7 +46,6 @@ class Mod:
     def update(self, instance):
         versions = self._project["versions"]
         filename = self._version["files"][0]["filename"]
-        print("Attempting upgrade for '" + str(self) + "'@'" + filename + "'.")
         for version in versions[-1:versions.index(self._version["id"]):-1]:
             version = make_modrinth_request("version/" + version)
             if instance.is_compatible_with(version):

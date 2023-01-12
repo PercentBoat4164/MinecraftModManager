@@ -1,7 +1,7 @@
-import Instance
-
 import json
 import os.path
+
+import Instance
 
 
 class MultiMC:
@@ -29,10 +29,14 @@ class MultiMC:
                         mmc_pack = json.loads(f.read())
                         for component in mmc_pack["components"]:
                             match component["cachedName"]:
-                                case "Minecraft": game_version = component["version"]
-                                case "Fabric Loader": loader = "fabric"
-                                case "Forge": loader = "forge"
-                                case "Quilt Loader": loader = "quilt"
+                                case "Minecraft":
+                                    game_version = component["version"]
+                                case "Fabric Loader":
+                                    loader = "fabric"
+                                case "Forge":
+                                    loader = "forge"
+                                case "Quilt Loader":
+                                    loader = "quilt"
 
                     # Export data to a new Instance
                     self.instances.update({name: Instance.Instance(i.path + "/.minecraft", name, game_version, loader)})
