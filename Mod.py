@@ -56,4 +56,3 @@ class Mod:
                 os.rename(path + filename, path + filename + ".disabled")
                 print("Updated", str(self) + " to " + version["version_number"] + ".")
                 return
-        print(str(self) + " is already up-to-date.")
