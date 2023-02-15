@@ -14,7 +14,7 @@ class Instance:
         self._loader = loader
 
     def __repr__(self):
-        return self.name + " @ " + self.path + " : " + self._loader + " " + self._game_version
+        return self.name + " @ " + self.path + " - " + self._loader + " " + self._game_version
 
     def is_compatible_with(self, version):
         return self._loader in version["loaders"] and self._game_version in version["game_versions"]
