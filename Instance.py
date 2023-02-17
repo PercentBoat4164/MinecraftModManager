@@ -96,7 +96,6 @@ class Instance:
             print("Missed mods:\n\t" + "\n\t".join(missed_mods))
 
     def update_all_mods(self):
-        updated_mods = []
         if len(self._mods) > 0:
             animator = LoadingScreenAnimator()
             print("Updating all mods ", end="")
@@ -110,14 +109,15 @@ class Instance:
 
             animator.stop()
 
-        # Filter updated mods
-        updated_mods = list(filter(lambda item: type(item) is str, updated_mods))
+            # Filter updated mods
+            updated_mods = list(filter(lambda item: type(item) is str, updated_mods))
 
-        # Display results
-        print("\b" * 19, end="")
-        if len(updated_mods) > 0:
-            print("======================== UPDATES ========================")
-            print("Updated mods:\n\t" + "\n\t".join(updated_mods))
+            # Display results
+            print("\b" * 19 + "======================== UPDATES ========================")
+            if len(updated_mods) > 0:
+                print("Updated mods:\n\t" + "\n\t".join(updated_mods))
+            else:
+                print("All mods are already up-to-date!")
 
     def get_game_version(self):
         return self._game_version

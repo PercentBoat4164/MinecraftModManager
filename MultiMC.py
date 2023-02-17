@@ -1,6 +1,6 @@
 import Instance
 import json
-import os.path
+import os
 
 
 class MultiMC:
@@ -14,11 +14,15 @@ class MultiMC:
             try:
                 with open("MultiMCDirectory.txt", "r") as f:
                     self.INSTANCE_LOCATION = f.read()
+                    if not os.path.exists(self.INSTANCE_LOCATION):
+                        print("The MultiMC installation has been moved or deleted.")
             except FileNotFoundError:
                 pass
             while not os.path.exists(self.INSTANCE_LOCATION):
                 self.INSTANCE_LOCATION = str(input(
                     "Enter the path to the MultiMC directory. (The directory containing the executable)\n")) + self._WINDOWS_MULTIMC_INSTANCE_LOCATION
+                if not os.path.exists(self.INSTANCE_LOCATION):
+                    print(self.INSTANCE_LOCATION + " is an invalid path.")
             with open("MultiMCDirectory.txt", "w") as f:
                 f.write(self.INSTANCE_LOCATION)
         else:
@@ -26,7 +30,7 @@ class MultiMC:
         # Search for all instances controlled my MultiMC
         if os.path.isdir(self.INSTANCE_LOCATION):
             for i in os.scandir(self.INSTANCE_LOCATION):
-                # Does this directory contains a valid instance?
+                # Does this directory contain a valid instance?
                 if os.path.isfile(os.path.join(i, "instance.cfg")):
                     # Find the instance name from the cfg file
                     name = ''
@@ -70,7 +74,7 @@ class MultiMC:
             try:
                 return self.instances[str(input("Enter an instance name to update.\n"))]
             except KeyError:
-                pass
+                print("That is not one of the instances listed above.")
 
 
 if __name__ == "__main__":
