@@ -54,5 +54,7 @@ class Mod:
                 with open(path + version["files"][0]["filename"], "wb") as f:
                     f.write(requests.get(url).content)
                 os.rename(path + filename, path + filename + ".disabled")
-                print("Updated", str(self) + " to " + version["version_number"] + ".")
-                return
+                old_version = self._version
+                self._version = version
+                return str(self) + " : " + old_version["version_number"] + " -> " + version["version_number"]
+        return False
