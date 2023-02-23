@@ -58,6 +58,8 @@ class MultiMC:
                                         loader = "quilt"
                             except KeyError:
                                 continue
+                    if not loader:
+                        loader = "vanilla"
 
                     # Export data to a new Instance
                     self.instances.update(
