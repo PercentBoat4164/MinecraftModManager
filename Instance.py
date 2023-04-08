@@ -2,6 +2,7 @@ import multiprocessing
 import os
 import threading
 import time
+import minecraft_launcher_lib.install
 
 import Mod
 
@@ -48,7 +49,7 @@ class Instance:
 
     def is_compatible_with(self, version):
         return (self._loader in version["loaders"] or (
-                    self._loader == "quilt" and "fabric" in version["loaders"])) and self._game_version in version[
+                self._loader == "quilt" and "fabric" in version["loaders"])) and self._game_version in version[
             "game_versions"]
 
     def _get_mod(self, mod):
@@ -124,3 +125,6 @@ class Instance:
 
     def get_loader(self):
         return self._loader
+
+    def install_minecraft(self):
+        minecraft_launcher_lib.install.install_minecraft_version(self._game_version, self.path)
